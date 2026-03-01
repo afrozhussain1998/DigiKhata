@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DigiKhata - Digital Ledger</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <!-- Notification Toast -->
+    <div id="toast" class="toast hidden"></div>
+
+    <main class="app-container">
+
+        <!-- ======================= AUTH VIEWS ======================= -->
+
+        <!-- Login View -->
+        <section id="login-view" class="view glass-panel active">
+            <div class="auth-header">
+                <h2><i class="fa-solid fa-book-open"></i> DigiKhata</h2>
+                <p>Welcome back! Sign in to continue</p>
+            </div>
+            <form id="login-form">
+                <div class="input-group">
+                    <i class="fa-solid fa-envelope"></i>
+                    <input type="email" id="login-email" placeholder="Email Address" required>
+                </div>
+                <div class="input-group">
+                    <i class="fa-solid fa-lock"></i>
+                    <input type="password" id="login-password" placeholder="Password" required>
+                </div>
+                <button type="submit" class="btn btn-primary btn-full">Sign In</button>
+            </form>
+            <p class="auth-switch">Don't have an account? <span id="go-to-register">Register here</span></p>
+        </section>
+
+        <!-- Register View -->
+        <section id="register-view" class="view glass-panel hidden">
+            <div class="auth-header">
+                <h2><i class="fa-solid fa-book-open"></i> DigiKhata</h2>
+                <p>Create your new shop ledger</p>
+            </div>
+            <form id="register-form">
+                <div class="input-group">
+                    <i class="fa-solid fa-user"></i>
+                    <input type="text" id="reg-name" placeholder="Full Name" required>
+                </div>
+                <div class="input-group">
+                    <i class="fa-solid fa-envelope"></i>
+                    <input type="email" id="reg-email" placeholder="Email Address" required>
+                </div>
+                <div class="input-group">
+                    <i class="fa-solid fa-lock"></i>
+                    <input type="password" id="reg-password" placeholder="Password (min 6 chars)" required
+                        minlength="6">
+                </div>
+                <button type="submit" class="btn btn-primary btn-full">Create Account</button>
+            </form>
+            <p class="auth-switch">Already have an account? <span id="go-to-login">Sign in</span></p>
+        </section>
+
+        <!-- ======================= MAIN DASHBOARD ======================= -->
+
+        <section id="dashboard-view" class="view glass-panels hidden full-height-view dashboard-layout">
+            <header class="app-header">
+                <div class="header-title">
+                    <h2><i class="fa-solid fa-book-open"></i> DigiKhata</h2>
+                    <span id="user-name-display" class="user-greeting"></span>
+                </div>
+                <div class="header-actions">
+                    <button class="icon-btn" id="nav-expenses" title="Daily Expenses" style="font-size: 1.3rem">
+                        <i class=" fa-solid fa-wallet"></i>
+                    </button>
+                    <button class="icon-btn logout-btn" id="logout-btn" title="Logout" style="font-size: 1.3rem">
+                        <i class=" fa-solid fa-right-from-bracket"></i>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Scrollable dashboard content -->
+            <div class="dashboard-scroll-area">
+                <div class="summary-cards">
+                    <div class="card glass-card">
+                        <h3>Total Given</h3>
+                        <p class="amount negative" id="total-credit">₹ 0</p>
+                    </div>
+                    <div class="card glass-card">
+                        <h3>Total Received</h3>
+                        <p class="amount positive" id="total-paid">₹ 0</p>
+                    </div>
+                    <div class="card glass-card">
+                        <h3>Total Balance</h3>
+                        <p class="amount" id="total-balance">₹ 0</p>
+                    </div>
+                </div>
+
+                <div class="section-header">
+                    <h3>Your Customers</h3>
+                    <button class="btn btn-primary btn-small" id="btn-add-customer">
+                        <i class="fa-solid fa-plus"></i> Add
+                    </button>
+                </div>
+
+                <!-- Customer List -->
+                <div class="list-container" id="customer-list">
+                    <!-- Customers appended via JS -->
+                </div>
+            </div>
+
+            <!-- Global Voice Assistant — OUTSIDE scroll area so it stays pinned -->
+            <button class="fab-assist btn-global-mic" title="Voice Assistant">
+                <i class="fa-solid fa-microphone"></i>
+            </button>
+        </section>
+
+        <!-- ======================= CUSTOMER DETAIL ======================= -->
+
+        <section id="customer-detail-view" class="view glass-panel hidden full-height-view">
+            <header class="view-header">
+                <button class="back-btn" id="back-to-dashboard"><i class="fa-solid fa-arrow-left"></i></button>
+                <div class="header-info">
+                    <h3 id="detail-customer-name">Customer Name</h3>
+                    <span class="badge" id="detail-customer-id">CUST-0000</span>
+                </div>
+                <div class="header-actions">
+                    <!-- New Edit/Delete Buttons -->
+                    <button class="icon-btn" id="btn-edit-customer" title="Edit Customer"
+                        style="color: rgb(255, 255, 255); font-size: 1.3rem;">
+                        <i class="fa-solid fa-pen"></i>
+                    </button>
+                    <!-- Existing Share/PDF Buttons -->
+                    <button class="icon-btn" id="btn-share-whatsapp" title="Share via WhatsApp"
+                        style="color: rgb(0, 255, 0); font-size: 1.3rem;">
+                        <i class="fa-brands fa-whatsapp"></i>
+                    </button>
+                    <button class="icon-btn" id="btn-download-pdf" title="Download PDF"
+                        style="color: rgb(58, 121, 248); font-size: 1.3rem;">
+                        <i class="fa-solid fa-file-pdf"></i>
+                    </button>
+                    <button class="icon-btn" id="btn-delete-customer" title="Delete Customer"
+                        style="color: rgb(248, 58, 58); font-size: 1.3rem;">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </div>
+            </header>
+
+            <div class="running-balance-card glass-card">
+                <h3>Running Balance</h3>
+                <h2 id="detail-balance" class="amount">₹ 0</h2>
+                <p id="detail-balance-status">Settled</p>
+            </div>
+
+            <!-- Assistant for Transactions -->
+
+            <button class="fab-assist btn-global-mic" title="Voice Assistant">
+                <i class="fa-solid fa-microphone"></i>
+            </button>
+            <p id="voice-status" class="voice-status-text"></p>
+
+
+            <div class="transactions-container">
+                <div class="section-header minimal">
+                    <h4>Transactions</h4>
+                </div>
+                <div class="list-container transactions-list" id="transaction-list">
+                    <!-- Transactions appended via JS -->
+                </div>
+            </div>
+
+            <div class="action-bar-bottom">
+                <button class="btn btn-credit" id="btn-add-credit">
+                    <i class="fa-solid fa-arrow-down"></i> Add Credit
+                </button>
+                <button class="btn btn-paid" id="btn-add-paid">
+                    <i class="fa-solid fa-arrow-up"></i> Amount Paid
+                </button>
+            </div>
+        </section>
+
+        <!-- ======================= EXPENSE TRACKER ======================= -->
+
+        <section id="expense-view" class="view glass-panel hidden full-height-view">
+            <header class="view-header">
+                <button class="back-btn" id="back-from-expenses"><i class="fa-solid fa-arrow-left"></i></button>
+                <div class="header-info">
+                    <h3>Daily Expenses</h3>
+                </div>
+                <!-- Optional Date Filter hidden for simplicity -->
+            </header>
+
+            <form id="add-expense-form" class="inline-form glass-card">
+                <div class="input-group">
+                    <input type="text" id="expense-desc" placeholder="What did you spend on?" required>
+                </div>
+                <div class="input-group amt-group">
+                    <span>₹</span>
+                    <input type="number" id="expense-amt" placeholder="Amount" required min="1">
+                    <button type="submit" class="btn btn-primary"><i class="fa-solid fa-plus"></i></button>
+                </div>
+            </form>
+
+            <div class="transactions-container">
+                <div class="section-header minimal">
+                    <h4>Recent Expenses</h4>
+                    <span id="expense-total" class="badge bg-danger">Total: ₹ 0</span>
+                </div>
+                <div class="list-container" id="expense-list">
+                    <!-- Expenses appended via JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ======================= MODALS ======================= -->
+
+        <!-- Add Customer Modal -->
+        <div id="modal-customer" class="modal-overlay hidden">
+            <div class="modal glass-panel">
+                <div class="modal-header">
+                    <h3>Add New Customer</h3>
+                    <button class="close-modal"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <form id="form-customer">
+                    <div class="input-group">
+                        <input type="text" id="cust-name" placeholder="Customer Name" required>
+                    </div>
+                    <div class="input-group">
+                        <input type="tel" id="cust-phone" placeholder="Phone Number" required>
+                    </div>
+                    <div class="input-group">
+                        <input type="text" id="cust-address" placeholder="Address (Optional)">
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-full">Save Customer</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Edit Customer Modal -->
+        <div id="modal-edit-customer" class="modal-overlay hidden">
+            <div class="modal glass-panel">
+                <div class="modal-header">
+                    <h3>Edit Customer</h3>
+                    <button class="close-modal"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <form id="form-edit-customer">
+                    <input type="hidden" id="edit-cust-id">
+                    <div class="input-group">
+                        <input type="text" id="edit-cust-name" placeholder="Customer Name" required>
+                    </div>
+                    <div class="input-group">
+                        <input type="tel" id="edit-cust-phone" placeholder="Phone Number" required>
+                    </div>
+                    <div class="input-group">
+                        <input type="text" id="edit-cust-address" placeholder="Address (Optional)">
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-full">Update Customer</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Add Transaction Modal -->
+        <div id="modal-transaction" class="modal-overlay hidden">
+            <div class="modal glass-panel">
+                <div class="modal-header">
+                    <h3 id="trans-modal-title">Add Transaction</h3>
+                    <button class="close-modal"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <form id="form-transaction">
+                    <input type="hidden" id="trans-type">
+                    <div class="input-amount-huge">
+                        <span>₹</span>
+                        <input type="number" id="trans-amount" placeholder="0" required min="1">
+                    </div>
+                    <div class="input-group">
+                        <input type="text" id="trans-desc" placeholder="Details (Optional)">
+                    </div>
+                    <button type="submit" class="btn btn-full" id="btn-save-transaction">Save</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Edit Transaction Modal -->
+        <div id="modal-edit-transaction" class="modal-overlay hidden">
+            <div class="modal glass-panel">
+                <div class="modal-header">
+                    <h3>Edit Transaction</h3>
+                    <button class="close-modal"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <form id="form-edit-transaction">
+                    <input type="hidden" id="edit-trans-id">
+                    <input type="hidden" id="edit-trans-type">
+                    <div class="input-amount-huge">
+                        <span>₹</span>
+                        <input type="number" id="edit-trans-amount" placeholder="0" required min="1">
+                    </div>
+                    <div class="input-group">
+                        <input type="text" id="edit-trans-desc" placeholder="Details (Optional)">
+                    </div>
+                    <button type="submit" class="btn btn-full" id="btn-update-transaction">Update</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Edit Expense Modal -->
+        <div id="modal-edit-expense" class="modal-overlay hidden">
+            <div class="modal glass-panel">
+                <div class="modal-header">
+                    <h3>Edit Expense</h3>
+                    <button class="close-modal"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <form id="form-edit-expense">
+                    <input type="hidden" id="edit-exp-id">
+                    <div class="input-amount-huge">
+                        <span>₹</span>
+                        <input type="number" id="edit-exp-amount" placeholder="0" required min="1">
+                    </div>
+                    <div class="input-group">
+                        <input type="text" id="edit-exp-desc" placeholder="What did you spend on?" required>
+                    </div>
+                    <button type="submit" class="btn btn-full" id="btn-update-expense">Update</button>
+                </form>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Scripts -->
+    <!-- jsPDF for PDF generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+
+    <!-- App Logic -->
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/components.js"></script>
+    <script src="js/speech.js"></script>
+    <script src="js/pdf.js"></script>
+    <script src="js/whatsapp.js"></script>
+    <script src="js/app.js"></script>
+</body>
+
+</html>
